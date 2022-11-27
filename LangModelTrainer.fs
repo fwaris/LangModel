@@ -13,8 +13,8 @@ open System.Diagnostics
 open TextUtils
 
 //select model type by 'opening' the appropriate module below
-//open LangModelGpt        
-open LangModel
+open LangModelGpt        
+//open LangModel
 
 let bptt = 32L              //chunk size for pairing words together for training
 let batch_size = 20L
