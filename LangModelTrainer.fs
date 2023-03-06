@@ -64,7 +64,7 @@ let get_batch (input:torch.Tensor) (index:int64) =
     let nextWords = input.[Slice(index + 1L, index + 1L + len)]
     let target = nextWords.reshape(-1L) //flatten next words as loss is easier to calculate
     words,target
-
+     
 //
 let train epoch (model:IModel) (optimizer:Optimizer) (trainData:torch.Tensor) ntokens =
     model.Module.train()
@@ -137,9 +137,9 @@ let run epochs =
     let valid_data = batchify (process_input datasets.Valid) eval_batch_size device
     let ntokens = Vocabulary.count vocab
     let imodel = modelFn ntokens device
-    use model = imodel.Module.``to``(device)
+    imodel.Module.``to``(device) |> ignore
     let lr = 2.50
-    let optimizer = SGD(model.parameters(), lr)
+    let optimizer = SGD(imodel.Module.parameters(), lr)
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
     let totalTime = Stopwatch()
     totalTime.Start()
@@ -153,7 +153,8 @@ let run epochs =
         let lossStr = val_loss.ToString("0.00")
         printfn $"\nEnd of epoch: {epoch} | time: {elapsed}s | loss: {lossStr}\n"
         scheduler.step()
-        model.save Model.modelFile |> ignore
+        imodel.Module.save Model.modelFile |> ignore
+        
     let tst_loss = evaluate imodel test_data ntokens vocab 1
     totalTime.Stop()
     let elapsed = totalTime.Elapsed.TotalSeconds.ToString("0.0")

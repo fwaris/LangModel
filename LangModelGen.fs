@@ -7,7 +7,7 @@ open TextUtils
 let rng = System.Random()
 
 let loadModel ntokens =
-    let m = LangModel.Model.create ntokens torch.CPU
+    let m = LangModelTrainer.modelFn ntokens torch.CPU
     m.Module.load(LangModelTrainer.modelFile).to'(LangModelTrainer.device) |> ignore
     m
 

@@ -51,7 +51,6 @@ module Model =
                 let dec = decoder.forward(enc)
                 dec,args
             )
-
         mdl.to'(device)
         mdl
 
