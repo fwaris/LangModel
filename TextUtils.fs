@@ -67,5 +67,9 @@ module Masks =
     open System
     let generateSubsequentMask size (device:TorchSharp.torch.Device) =
         let mask = torch.ones([|size; size|]).tril()
-        let subseqMask=torch.zeros(size,size).masked_fill(mask.eq(0.f.ToScalar()), (-infinityf).ToScalar())
+        let subseqMask=
+            torch.zeros(size,size)
+                .masked_fill(mask.eq(0.f.ToScalar()), (-infinityf).ToScalar())
+                .masked_fill(mask.eq(1.0f.ToScalar()), 0.0f.ToScalar())
+        let t_mask = TorchSharp.Fun.Tensor.getDataNested<float32> subseqMask
         subseqMask.``to``(device)
